@@ -55,6 +55,7 @@ jobs:
           path: |
             ./calculadora/bin/Release/net8.0
             ./calculadora.teste/bin/Release/net8.0
+            ./calculadora/Dockerfile
 
   teste:
     name: Testes
