@@ -11,7 +11,7 @@ jobs:
 
     steps:
       # Baixa o repositório principal
-      - name: Checkout do repositório principal
+      - name: Checkout do repositório principal 
         uses: actions/checkout@v4
         with:
           repository: WAYDS/calculadora
