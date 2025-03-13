@@ -87,7 +87,7 @@ jobs:
 
       # Executa os testes
       - name: Executar testes
-        run: dotnet test ./calculadora.teste/bin/Release/net8.0/calculadora.teste.dll --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test calculadora.teste/bin/Release/net8.0/calculadora.teste.dll --logger "trx;LogFileName=test-results.trx"
 
       # Publica os resultados dos testes
       - name: Publicar resultados dos testes
@@ -107,7 +107,7 @@ jobs:
       - name: Baixar artefatos do build
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts
+          name: fonte
           path: ./
 
       # Faz login no Docker Hub
