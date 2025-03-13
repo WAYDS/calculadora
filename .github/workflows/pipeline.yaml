@@ -109,7 +109,7 @@ jobs:
 
       # Construir a imagem Docker
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./calculadora/bin/Release/net8.0
 
       # Publica a imagem no Docker Hub
       - name: Push Docker image
