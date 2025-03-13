@@ -3,6 +3,8 @@ name: Testes
 on:
   workflow_run:
     workflows: ["builds"]
+    branches:
+      - develop
     types:
       - completed
 
