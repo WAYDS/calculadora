@@ -1,0 +1,116 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Baixa o repositório principal
+      - name: Checkout do repositório principal
+        uses: actions/checkout@v4
+        with:
+          repository: WAYDS/calculadora
+          ref: develop
+          path: calculadora
+          token: ${{ secrets.ACTIONS_TOKEN }}
+
+      # Baixa o repositório de testes
+      - name: Checkout do repositório de testes
+        uses: actions/checkout@v4
+        with:
+          repository: WAYDS/calculadora.teste
+          path: calculadora.teste
+          token: ${{ secrets.ACTIONS_TOKEN }}
+
+      # Configura o .NET
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Restaura as dependências
+      - name: Restaurar dependências
+        run: |
+          dotnet restore ./calculadora/calculadora.csproj
+          dotnet add ./calculadora.teste/calculadora.teste.csproj reference ./calculadora/calculadora.csproj
+          dotnet restore ./calculadora.teste/calculadora.teste.csproj
+
+      # Builda os projetos
+      - name: Buildar projetos
+        run: |
+          dotnet build ./calculadora/calculadora.csproj --configuration Release --no-restore
+          dotnet build ./calculadora.teste/calculadora.teste.csproj --configuration Release --no-restore
+
+      # Publica os artefatos do build
+      - name: Publicar artefatos do build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            ./calculadora/bin/Release/net8.0
+            ./calculadora.teste/bin/Release/net8.0
+
+  teste:
+    name: Testes
+    runs-on: ubuntu-latest
+    needs: build # Depende do job "build"
+
+    steps:
+      # Baixa os artefatos do build
+      - name: Baixar artefatos do build
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./
+
+      # Configura o .NET
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Executa os testes
+      - name: Executar testes
+        run: dotnet test ./calculadora.teste/bin/Release/net8.0/calculadora.teste.dll --logger "trx;LogFileName=test-results.trx"
+
+      # Publica os resultados dos testes
+      - name: Publicar resultados dos testes
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ./calculadora.teste/TestResults/*.trx
+
+  deploy:
+    name: Deploy Docker
+    runs-on: ubuntu-latest
+    needs: teste # Depende do job "teste"
+
+    steps:
+      # Baixa os artefatos do build
+      - name: Baixar artefatos do build
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./
+
+      # Faz login no Docker Hub
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      # Construir a imagem Docker
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./calculadora
+
+      # Publica a imagem no Docker Hub
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest
