@@ -11,32 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Checkout do repositório principal
-        uses: actions/checkout@v4
+      # Baixa os artefatos do build
+      - name: Baixar artefatos do build
+        uses: actions/download-artifact@v4
         with:
-          repository: WAYDS/calculadora
-          ref: develop
-          path: calculadora
-          token: ${{ secrets.ACTIONS_TOKEN }}
+          name: build-artifacts
+          path: ./
 
-      - name: Checkout do repositório de testes
-        uses: actions/checkout@v4
-        with:
-          repository: WAYDS/calculadora.teste
-          path: calculadora.teste
-          token: ${{ secrets.ACTIONS_TOKEN }}
-
+      # Configura o .NET
       - name: Configurar .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restaurar dependências do projeto de testes
-        run: dotnet restore ./calculadora.teste/calculadora.teste.csproj
-
+      # Executa os testes
       - name: Executar testes
-        run: dotnet test ./calculadora.teste/calculadora.teste.csproj --no-build --configuration Release --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test ./calculadora.teste/bin/Release/net8.0/calculadora.teste.dll --logger "trx;LogFileName=test-results.trx"
 
+      # Publica os resultados dos testes
       - name: Publicar resultados dos testes
         uses: actions/upload-artifact@v4
         if: always()

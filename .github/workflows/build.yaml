@@ -39,3 +39,11 @@ jobs:
         run: |
           dotnet build ./calculadora/calculadora.csproj --configuration Release --no-restore
           dotnet build ./calculadora.teste/calculadora.teste.csproj --configuration Release --no-restore
+
+      - name: Publicar artefatos do build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            ./calculadora/bin/Release/net8.0
+            ./calculadora.teste/bin/Release/net8.0
