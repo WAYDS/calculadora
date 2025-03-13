@@ -109,7 +109,7 @@ jobs:
 
       # Construir a imagem Docker
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./calculadora
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./
 
       # Publica a imagem no Docker Hub
       - name: Push Docker image
