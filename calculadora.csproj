@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include=".github\workflows\build.yaml" />
+    <None Include=".github\workflows\builds.yaml" />
     <None Include=".github\workflows\deploy.yaml" />
-    <None Include=".github\workflows\test.yaml" />
+    <None Include=".github\workflows\testes.yaml" />
   </ItemGroup>
 
   <ItemGroup>
