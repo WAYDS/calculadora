@@ -87,7 +87,7 @@ jobs:
 
       # Executa os testes
       - name: Executar testes
-        run: dotnet test calculadora.teste/bin/Release/net8.0/calculadora.teste.dll --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test ./calculadora.teste.dll --logger "trx;LogFileName=test-results.trx"
 
       # Publica os resultados dos testes
       - name: Publicar resultados dos testes
@@ -119,7 +119,7 @@ jobs:
 
       # Construir a imagem Docker
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./calculadora
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./
 
       # Publica a imagem no Docker Hub
       - name: Push Docker image
