@@ -1,0 +1,32 @@
+name: Deploy Docker
+
+on:
+  workflow_run:
+    workflows: ["Testes"]
+    types:
+      - completed
+
+jobs:
+  docker-build-push:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout do repositório principal
+        uses: actions/checkout@v4
+        with:
+          repository: WAYDS/calculadora
+          ref: develop
+          path: calculadora
+          token: ${{ secrets.ACTIONS_TOKEN }}
+
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./calculadora
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest

@@ -1,0 +1,45 @@
+name: Testes
+
+on:
+  workflow_run:
+    workflows: ["Builds"]
+    types:
+      - completed
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout do repositório principal
+        uses: actions/checkout@v4
+        with:
+          repository: WAYDS/calculadora
+          ref: develop
+          path: calculadora
+          token: ${{ secrets.ACTIONS_TOKEN }}
+
+      - name: Checkout do repositório de testes
+        uses: actions/checkout@v4
+        with:
+          repository: WAYDS/calculadora.teste
+          path: calculadora.teste
+          token: ${{ secrets.ACTIONS_TOKEN }}
+
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restaurar dependências do projeto de testes
+        run: dotnet restore ./calculadora.teste/calculadora.teste.csproj
+
+      - name: Executar testes
+        run: dotnet test ./calculadora.teste/calculadora.teste.csproj --no-build --configuration Release --logger "trx;LogFileName=test-results.trx"
+
+      - name: Publicar resultados dos testes
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ./calculadora.teste/TestResults/*.trx
