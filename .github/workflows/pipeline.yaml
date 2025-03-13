@@ -98,7 +98,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: ./
+          path: ./artifacts
 
       # Faz login no Docker Hub
       - name: Login no Docker Hub
@@ -109,7 +109,7 @@ jobs:
 
       # Construir a imagem Docker
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./calculadora/bin/Release/net8.0
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./artifacts/calculadora
 
       # Publica a imagem no Docker Hub
       - name: Push Docker image
