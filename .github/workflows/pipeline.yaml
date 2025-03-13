@@ -48,14 +48,23 @@ jobs:
           dotnet build ./calculadora.teste/calculadora.teste.csproj --configuration Release --no-restore
 
       # Publica os artefatos do build
-      - name: Publicar artefatos do build
+      - name: Publicar artefatos do codigo
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
-          path: |
-            ./calculadora/bin/Release/net8.0
-            ./calculadora.teste/bin/Release/net8.0
-            ./calculadora/Dockerfile
+          name: fonte
+          path: ./calculadora
+
+      - name: Publicar binários do projeto principal
+        uses: actions/upload-artifact@v4
+        with:
+           name: binarios-principal
+           path: ./calculadora/bin/Release/net8.0
+
+      - name: Publicar binários do projeto de testes
+        uses: actions/upload-artifact@v4
+        with:
+            name: binarios-teste
+            path: ./calculadora.teste/bin/Release/net8.0
 
   teste:
     name: Testes
@@ -67,7 +76,7 @@ jobs:
       - name: Baixar artefatos do build
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts
+          name: binarios-teste
           path: ./
 
       # Configura o .NET
@@ -99,7 +108,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: ./artifacts
+          path: ./
 
       # Faz login no Docker Hub
       - name: Login no Docker Hub
@@ -110,7 +119,7 @@ jobs:
 
       # Construir a imagem Docker
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./artifacts/calculadora
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest ./calculadora
 
       # Publica a imagem no Docker Hub
       - name: Push Docker image
