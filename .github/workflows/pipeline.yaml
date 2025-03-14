@@ -1,7 +1,7 @@
 name: Merge Teste Pipeline
 
 on:
-  push:
+  pull_request:
     branches:
       - main 
 
@@ -48,11 +48,4 @@ jobs:
           dotnet build ./calculadora.teste/calculadora.teste.csproj --configuration Release --no-restore
 
       - name: Executar testes
-        run: dotnet test ./calculadora.teste/bin/Release/net8.0/calculadora.teste.dll --logger "trx;LogFileName=./calculadora.teste/bin/Release/net8.0/TestResults/test-results.trx"
-
-      - name: Publicar resultados dos testes
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: ./calculadora.teste/bin/Release/net8.0/TestResults/test-results.trx
+        run: dotnet test ./calculadora.teste/bin/Release/net8.0/calculadora.teste.dll
