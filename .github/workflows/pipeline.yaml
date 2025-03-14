@@ -1,7 +1,7 @@
 name: Merge Teste Pipeline
 
 on:
-  push:
+  pull_request:
     branches:
       - main 
 
