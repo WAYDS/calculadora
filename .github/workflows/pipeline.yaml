@@ -55,4 +55,4 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: ./calculadora.teste/bin/Release/net8.0/TestResults/*.trx
+          path: ./calculadora.teste/bin/Release/net8.0/TestResults/test-results.trx
