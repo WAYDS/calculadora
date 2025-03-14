@@ -6,8 +6,8 @@ on:
       - main 
 
 jobs:
-  build:
-    name: Build
+  test:
+    name: Teste PR
     runs-on: ubuntu-latest
 
     steps:
@@ -47,49 +47,9 @@ jobs:
           dotnet build ./calculadora/calculadora.csproj --configuration Release --no-restore
           dotnet build ./calculadora.teste/calculadora.teste.csproj --configuration Release --no-restore
 
-      # Publica os artefatos do build
-      - name: Publicar artefatos do codigo
-        uses: actions/upload-artifact@v4
-        with:
-          name: fonte
-          path: ./calculadora
-
-      - name: Publicar binários do projeto principal
-        uses: actions/upload-artifact@v4
-        with:
-           name: binarios-principal
-           path: ./calculadora/bin/Release/net8.0
-
-      - name: Publicar binários do projeto de testes
-        uses: actions/upload-artifact@v4
-        with:
-            name: binarios-teste
-            path: ./calculadora.teste/bin/Release/net8.0
-
-  teste:
-    name: Testes
-    runs-on: ubuntu-latest
-    needs: build # Depende do job "build"
-
-    steps:
-      # Baixa os artefatos do build
-      - name: Baixar artefatos do build
-        uses: actions/download-artifact@v4
-        with:
-          name: binarios-teste
-          path: ./
-
-      # Configura o .NET
-      - name: Configurar .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      # Executa os testes
       - name: Executar testes
-        run: dotnet test ./calculadora.teste.dll --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test ./calculadora.teste/bin/Release/net8.0/calculadora.teste.dll --logger "trx;LogFileName=test-results.trx"
 
-      # Publica os resultados dos testes
       - name: Publicar resultados dos testes
         uses: actions/upload-artifact@v4
         if: always()
