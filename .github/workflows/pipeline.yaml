@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: WAYDS/calculadora
-          ref: develop
           path: calculadora
           token: ${{ secrets.ACTIONS_TOKEN }}
 
