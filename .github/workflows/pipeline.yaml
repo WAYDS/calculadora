@@ -1,13 +1,13 @@
 name: Merge Teste Pipeline
 
 on:
-  pull_request:
+  push:
     branches:
       - main 
 
 jobs:
   test:
-    name: Teste PR
+    name: Teste PR2
     runs-on: ubuntu-latest
 
     steps:
