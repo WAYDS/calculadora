@@ -124,3 +124,16 @@ jobs:
       # Publica a imagem no Docker Hub
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest
+
+            # Reinicia o container via SSH
+      - name: Restart container via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest
+            docker stop calculadora || true
+            docker rm calculadora || true
+            docker run -d --name calculadora -p 4033:80 ${{ secrets.DOCKER_HUB_USERNAME }}/calculadora:latest
