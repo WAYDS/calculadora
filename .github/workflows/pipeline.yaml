@@ -89,14 +89,6 @@ jobs:
       - name: Executar testes
         run: dotnet test ./calculadora.teste.dll --logger "trx;LogFileName=test-results.trx"
 
-      # Publica os resultados dos testes
-      - name: Publicar resultados dos testes
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: ./calculadora.teste/TestResults/*.trx
-
   deploy:
     name: Deploy Docker
     runs-on: ubuntu-latest
