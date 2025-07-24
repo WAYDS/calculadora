@@ -18,7 +18,7 @@ jobs:
           repository: WAYDS/calculadora
           ref: develop
           path: calculadora
-          token: ${{ secrets.ACTIONS_TOKEN }}
+          token: ${{ secrets.TESTE_TOKEN }}
 
       # Baixa o repositório de testes
       - name: Checkout do repositório de testes
@@ -26,7 +26,7 @@ jobs:
         with:
           repository: WAYDS/calculadora.teste
           path: calculadora.teste
-          token: ${{ secrets.ACTIONS_TOKEN }}
+          token: ${{ secrets.TESTE_TOKEN }}
 
       # Configura o .NET
       - name: Configurar .NET
