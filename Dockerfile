@@ -33,4 +33,4 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Inicia SSH + app .NET
-CMD mkdir -p /run/sshd && /usr/sbin/sshd -D & dotnet calculadora.dll
+CMD ["bash", "-c", "mkdir -p /run/sshd && /usr/sbin/sshd && exec dotnet calculadora.dll"]
