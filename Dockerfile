@@ -2,8 +2,8 @@
 FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
 
 WORKDIR /app
-EXPOSE 80  # Porta do app .NET
-EXPOSE 22  # Porta do SSH
+EXPOSE 80
+EXPOSE 22 
 
 # Instala SSH e net-tools como root
 RUN apt-get update && \
