@@ -1,11 +1,11 @@
-# Stage 1: Base image (runtime) - Configuração única do SSH
+# Stage 1: Base image (runtime)
 FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
-USER $APP_UID
+
 WORKDIR /app
 EXPOSE 80  # Porta do app .NET
 EXPOSE 22  # Porta do SSH
 
-# Instala SSH e net-tools UMA ÚNICA VEZ (no estágio base)
+# Instala SSH e net-tools como root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends openssh-server net-tools && \
     mkdir -p /run/sshd && \
@@ -13,7 +13,7 @@ RUN apt-get update && \
     echo "PermitRootLogin yes" >> /etc/ssh/sshd_config && \
     echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
 
-# Stages de build e publish (mantidos originais)
+# Stages de build e publish
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
@@ -27,10 +27,10 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./calculadora.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Stage final: Herda tudo do estágio "base" e adiciona o app .NET
+# Stage final
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Inicia SSH em segundo plano + aplicativo .NET
+# Inicia SSH + app .NET
 CMD mkdir -p /run/sshd && /usr/sbin/sshd -D & dotnet calculadora.dll
